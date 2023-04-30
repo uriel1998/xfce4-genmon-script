@@ -17,6 +17,19 @@
 # 🔁🚦
 #!/bin/bash
 
+
+
+ICON="networkmanager"
+IFACE=""
+LAN_IP=""
+WAN_IP=""
+
+get_iface (){
+    # Are we wifi/eth0/tunneled?
+    # -m1 only matches the first - can put in a loop later to catch all
+    # and if it's two, then they're separated by a space. So need to throw them 
+    # into an array
+    IFACE=$(netstat -nr | grep -m1 ^0.0.0.0 | awk -F " " '{print $8}')
 #if (( $(sudo /sbin/ethtool wlan0 | grep -c "Link detected: yes") == 1 )); then
 #   echo "wlp2s0"
 #fi
@@ -25,26 +38,10 @@
 #   echo "eth0"
 #fi
 
-IFACE=""
-LAN_IP=""
-WAN_IP=""
-TUNNELED=""
-
-get_iface (){
-    # -m1 only matches the first - can put in a loop later to catch all
-    IFACE=$(netstat -nr | grep -m1 ^0.0.0.0 | awk -F " " '{print $8}')
-    # Are we wifi/eth0/tunneled?
-    TUNNELED=$(netstat -nr | grep -m 1 ^0.0.0.0 | awk -F " " '{print $8}')
 }
 
-
-
-
 wireless_info () {
-        #    wifi_quality: display wifi signal quality
-    #    Copyright (C) 2008 Canonical Ltd.
-    #    Authors: Dustin Kirkland <kirkland@canonical.com>
-    
+
     #wlan0     IEEE 802.11  ESSID:"insertSSIDhere-5g"  
      #     Mode:Managed  Frequency:5.745 GHz  Access Point: 50:C7:BF:CC:90:AE   
       #    Bit Rate=6 Mb/s   Tx-Power=15 dBm   
@@ -54,7 +51,7 @@ wireless_info () {
           #Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
           #Tx excessive retries:0  Invalid misc:0   Missed beacon:0
 
-       iwconfig=`/sbin/iwconfig 2>/dev/null`
+    iwconfig=`/sbin/iwconfig 2>/dev/null`
     bitrate=`echo "$iwconfig" | grep "Bit Rate." | sed -e "s/^.*Bit Rate.//" -e "s/ .*$//g"`
     [ -z "$bitrate" ] && exit 0
     quality=`echo "$iwconfig" | grep "Link Quality." | sed -e "s/^.*Link Quality.//" -e "s/ .*$//g" | awk -F/ '{printf "%.0f", 100*$1/$2}'`
@@ -124,7 +121,8 @@ main (){
     if [ "$WAN_IP" == "" ];then
         get_wan_ip_3rdparty
     fi
-
+    
+    # if iface includes wlan0, then get wireless info
 
 # format output here with emojis, color, xfce4 stuff (or plain for conky?)
     if [ "$QUIET" = 4 ];then
@@ -140,20 +138,12 @@ main (){
 }
 
 
-main
-
+do_genmon (){
 
 
 # do the genmon
 echo "<icon>$ICON</icon><iconclick>xfce4-taskmanager</iconclick>"
 echo "<txt> $CPU | $MEMUSAGE | $HD </txt><txtclick>xfce4-taskmanager</txtclick>"
-echo "<tool>-=CPU $CPULOAD=-
-$TOPCPU
 
--=MEM: $MEMUSED of $MEMUSAGE2=-
-$TOPMEM
-
--=HD usage: $HDUSED of $HDSIZE GB in use=-
-$TOPHD</tool>"
-
-exit 0
+    exit 0
+}
