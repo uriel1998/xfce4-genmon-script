@@ -6,10 +6,14 @@
 # https://github.com/xtonousou/xfce4-genmon-scripts
 
 # setting some defaults. Change as appropriate.
-CPUWARN=70
-CPUALARM=70
-TEMPWARN=80
-TEMPALARM=95
+WARN=80
+ALARM=95
+CPUWARN=$WARN
+CPUALARM=$ALARM
+MEMWARN=$WARN
+MEMALARM=$ALARM
+TEMPWARN=$WARN
+TEMPALARM=$ALARM
 LOADWARN=3
 LOADALARM=5
 
