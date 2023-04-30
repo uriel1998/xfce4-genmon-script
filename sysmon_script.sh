@@ -2,15 +2,18 @@
 
 ##############################################################################
 # wan_detect, by Steven Saus 28 April 2023
+# Cribs from https://github.com/almaceleste/xfce4-genmon-scripts
+# https://github.com/xtonousou/xfce4-genmon-scripts
 
-CPU=""
-MEM=""
-FREEMEM=""
-TEMP=""
-LOAD=""
-IOWAIT=""
-BAROMETERS=""
+# setting some defaults. Change as appropriate.
+CPUWARN=70
+CPUALARM=70
+TEMPWARN=80
+TEMPALARM=95
+LOADWARN=3
+LOADALARM=5
 
+# setting icons
 #cpu=☢💻
 #mem=✇📀💿
 #temp=☮  🌡
@@ -18,6 +21,27 @@ BAROMETERS=""
 #load=⚙📜
 #barometers=⚗
 #🔋🐧💾📩💥⚠
+
+# Resetting variables
+CPU=""
+MEM=""
+FREEMEM=""
+TEMP=""
+LOAD=""
+IOWAIT=""
+
+warn_colors (){
+    # pass in VALUE, WARN, ALARM values, returns color
+    if [ $1 -gt $3 ];then
+        color='red'
+    elif [ $1 -gt $2 ];then
+        color='yellow'
+    else
+        color='lightgrey'
+    fi
+    echo "$color"
+}
+
 
 get_cpu (){
     #https://www.baeldung.com/linux/get-cpu-usage
