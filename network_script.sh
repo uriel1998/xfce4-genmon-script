@@ -36,6 +36,16 @@ wireless_info () {
         #    wifi_quality: display wifi signal quality
     #    Copyright (C) 2008 Canonical Ltd.
     #    Authors: Dustin Kirkland <kirkland@canonical.com>
+    
+    #wlan0     IEEE 802.11  ESSID:"insertSSIDhere-5g"  
+     #     Mode:Managed  Frequency:5.745 GHz  Access Point: 50:C7:BF:CC:90:AE   
+      #    Bit Rate=6 Mb/s   Tx-Power=15 dBm   
+       #   Retry short limit:7   RTS thr:off   Fragment thr:off
+        #  Power Management:off
+         # Link Quality=63/70  Signal level=-47 dBm  
+          #Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          #Tx excessive retries:0  Invalid misc:0   Missed beacon:0
+
        iwconfig=`/sbin/iwconfig 2>/dev/null`
     bitrate=`echo "$iwconfig" | grep "Bit Rate." | sed -e "s/^.*Bit Rate.//" -e "s/ .*$//g"`
     [ -z "$bitrate" ] && exit 0
