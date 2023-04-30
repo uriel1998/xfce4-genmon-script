@@ -57,7 +57,7 @@ get_cpu (){
     CPU_RAW=$(cat /proc/stat |grep cpu |tail -1|awk '{print ($5*100)/($2+$3+$4+$5+$6+$7+$8+$9+$10)}'|awk '{print 100-$1}')
     CPU=$(printf "%.0f" $CPU_RAW)
     color=$(warn_colors $CPU $CPU_WARN $CPU_ALARM)
-    printf "%s <span fgcolor='%s'>%s</span>" "${cpu_icon}" "${color}" "${CPU}"
+    printf "%s<span fgcolor='%s'>%s</span>" "${cpu_icon}" "${color}" "${CPU}"
 }
 
 
@@ -69,7 +69,7 @@ get_memory (){
     MEM=$(echo "scale=2;($MEMTOT - $MEMAVA)" | bc)
     MEMWARN=$(printf "%.0f" $MEM)
     color=$(warn_colors $MEMWARN $MEM_WARN $MEM_ALARM)
-    printf "%s <span fgcolor='%s'>%s</span>" "${mem_icon}" "${color}" "${MEM}"
+    printf "%s<span fgcolor='%s'>%s</span>" "${mem_icon}" "${color}" "${MEM}"
 }
 
 get_temp (){
@@ -79,7 +79,7 @@ get_temp (){
     TEMP=$(sensors | awk '/Package id 0/{print $4}'| tr -d "+" | awk -F "." "{print $1}")
     TEMPWARN=$(printf "%.0f" $TEMP)
     color=$(warn_colors $TEMPWARN $TEMP_WARN $TEMP_ALARM)
-    printf "%s <span fgcolor='%s'>%s</span>" "${temp_icon}" "${color}" "${TEMP}"    
+    printf "%s<span fgcolor='%s'>%s</span>" "${temp_icon}" "${color}" "${TEMP}"    
 }
 
 get_load (){
@@ -89,7 +89,7 @@ get_load (){
     LOAD1=$(printf "%0.f" $(echo $LOAD | awk '{print $1}'))
     # only really want 1m load for coloration
     color=$(warn_colors $LOAD1 $LOAD_WARN $LOAD_ALARM)
-    printf "%s <span fgcolor='%s'>%s</span>" "${load_icon}" "${color}" "${LOAD}"        
+    printf "%s<span fgcolor='%s'>%s</span>" "${load_icon}" "${color}" "${LOAD}"        
 }
 
 get_battery (){
@@ -106,7 +106,7 @@ do_genmon (){
     # do the genmon
     echo "<icon>$ICON</icon><iconclick>xfce4-taskmanager</iconclick>"
     # build the text string
-    echo "<txt>$(get_cpu) $(get_memory) $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
+    echo "<txt>$(get_cpu)% $(get_memory)% $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
 
     exit 0    
 }
