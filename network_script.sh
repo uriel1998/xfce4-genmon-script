@@ -15,7 +15,15 @@
 # wifi=📡
 # wlan = ⋤ 🛰 🗺📠
 # 🔁🚦
+#!/bin/bash
 
+#if (( $(sudo /sbin/ethtool wlan0 | grep -c "Link detected: yes") == 1 )); then
+#   echo "wlp2s0"
+#fi
+
+#if (( $(sudo /sbin/ethtool eth0 | grep -c "Link detected: yes") == 1 )); then
+#   echo "eth0"
+#fi
 
 IFACE=""
 LAN_IP=""
@@ -133,3 +141,19 @@ main (){
 
 
 main
+
+
+
+# do the genmon
+echo "<icon>$ICON</icon><iconclick>xfce4-taskmanager</iconclick>"
+echo "<txt> $CPU | $MEMUSAGE | $HD </txt><txtclick>xfce4-taskmanager</txtclick>"
+echo "<tool>-=CPU $CPULOAD=-
+$TOPCPU
+
+-=MEM: $MEMUSED of $MEMUSAGE2=-
+$TOPMEM
+
+-=HD usage: $HDUSED of $HDSIZE GB in use=-
+$TOPHD</tool>"
+
+exit 0
