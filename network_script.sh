@@ -15,10 +15,12 @@ WAN_ICON=🛰
 
 ICON="networkmanager"
 IFACE=""
-IFACE_INFO=""  # used for storing wireless link quality
 IFACE_ICON=""
 IFACE_IP=""
 WAN_IP=""
+# For wifi quality, so reverse of what you'd expect
+WARN=50
+ALARM=30
 
 get_iface(){
     # Are we wifi/eth0/tunneled?
@@ -31,7 +33,8 @@ wireless_info() {
     # only called if wireless card (wlan0 by default) is detected.
     # returns link quality here only, but iwconfig does return a lot more
     # info if you're so interested.
-    /sbin/iwconfig 2>/dev/null | grep "Link Quality" | sed -e "s/^.*Link Quality.//" -e "s/ .*$//g" | awk -F/ '{printf "%.0f", 100*$1/$2}'
+    QUALITY=$(/sbin/iwconfig 2>/dev/null | grep "Link Quality" | sed -e "s/^.*Link Quality.//" -e "s/ .*$//g" | awk -F/ '{printf "%.0f", 100*$1/$2}')
+    echo "<span color='$(warn_colors ${QUALITY})'${QUALITY}</span>"
 }
 
 get_lan_ip (){
@@ -91,16 +94,25 @@ get_wan_ip_3rdparty () {
     fi
 }
 
+warn_colors (){
+    if [ $1 -gt $ALARM ];then
+        color='red'
+    elif [ $1 -gt $WARN ];then
+        color='yellow'
+    else
+        color='lightgrey'
+    fi
+    echo "$color"
+}
 
 do_genmon(){
     get_iface
     # for multiple connections 
     for ((i = 0; i < ${#IFACE[@]}; i++));do
+        IFACE_IP[$i]=$(get_lan_ip "${IFACE[$i]}") 
         if [ "${IFACE[$i]}" == "wlan0" ];then
             IFACE_ICON[$i]="${WLAN_ICON}"
-            IFACE_INFO[$i]=$(wireless_info "${IFACE[$i]}") 
-            # this is where we'd add coloring for quality, will do later.
-            # TODO            
+            IFACE_IP[$i]="${IFACE_IP[$i]}$(wireless_info "${IFACE[$i]}")"
         elif [ "${IFACE[$i]}" == "eth0" ];then
             IFACE_ICON[$i]="${ETH_ICON}"
             IFACE_INFO[$i]=""
@@ -119,7 +131,9 @@ do_genmon(){
         WAN_IP="Offline"
     fi
     # and now to build the string...
-
+    for ((i = 0; i < ${#IFACE[@]}; i++));do
+        ${IFACE_ICON[$i]}${IFACE_IP}
+    
     echo "<txt>$(get_cpu)% $(get_memory)% $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
 
  
