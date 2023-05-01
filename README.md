@@ -16,8 +16,7 @@ Depends heavily on quite a few monitoring utilities, such as `sensors`, `acpi`,
 
 Features:
 
-* Definable "warning" and "alert" values for pretty much every variable in 
-`sysmon_script` with colorization to yellow and red.
+* Definable "warning" and "alert" values for pretty much every variable in `sysmon_script` with colorization to yellow and red.
 * Automatic detection of VPN
 * Determines WAN IP address through a cascading fallback of sites
 * Uses emojis for inline "icons" so you can adjust the linesize easily.
