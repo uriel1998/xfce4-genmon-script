@@ -99,11 +99,11 @@ get_load (){
 get_battery (){
     BATTERY=$(acpi -b |awk -F ": " '{print $2}'| awk -F "," '{print substr($1,1,1) $2}')
     BATTERY_VALUE=$(acpi -b |awk -F ": " '{print $2}'| awk -F " " '{print $2}' | tr -d "%" )
-    BATTWARN=$(printf "%.0f" $BATTERY_VALUE)
-    BATTERY_WARN=$(echo "scale=2;(100-$BATTERY_WARN)" | bc)
-    BATTERY_ALARM=$(echo "scale=2;(100-$BATTERY_ALARM)" | bc) 
+    BATTWARN=$(echo "scale=2;(100-$BATTERY_VALUE)" | bc)
+    BATTWARN=$(printf "%.0f" $BATTWARN)
+
     color=$(warn_colors $BATTWARN $BATTERY_WARN $BATTERY_ALARM)
-    printf "%s <span fgcolor='%s'>%s</span>" "${battery_icon}" "${color}" "${BATTERY}"        
+    printf "%s <span fgcolor='%s'>%s</span>" "${power_icon}" "${color}" "${BATTERY}"        
 }
 
 do_genmon (){
