@@ -9,7 +9,7 @@
 
 # Network script for xfce-genmon panel plugin, etc.
 TUN_ICON=🔒
-ETH_ICON=☎
+ETH_ICON=🔗
 WLAN_ICON=📡
 WAN_ICON=🛰
 
@@ -34,7 +34,7 @@ wireless_info() {
     # returns link quality here only, but iwconfig does return a lot more
     # info if you're so interested.
     QUALITY=$(/sbin/iwconfig 2>/dev/null | grep "Link Quality" | sed -e "s/^.*Link Quality.//" -e "s/ .*$//g" | awk -F/ '{printf "%.0f", 100*$1/$2}')
-    echo "<span color='$(warn_colors ${QUALITY})'${QUALITY}</span>"
+    echo "<span color='$(warn_colors ${QUALITY})'>${QUALITY}</span>"
 }
 
 get_lan_ip (){
@@ -95,9 +95,9 @@ get_wan_ip_3rdparty () {
 }
 
 warn_colors (){
-    if [ $1 -gt $ALARM ];then
+    if [ $1 -lt $ALARM ];then
         color='red'
-    elif [ $1 -gt $WARN ];then
+    elif [ $1 -lt $WARN ];then
         color='yellow'
     else
         color='lightgrey'
@@ -112,10 +112,10 @@ do_genmon(){
         IFACE_IP[$i]=$(get_lan_ip "${IFACE[$i]}") 
         if [ "${IFACE[$i]}" == "wlan0" ];then
             IFACE_ICON[$i]="${WLAN_ICON}"
-            IFACE_IP[$i]="${IFACE_IP[$i]}$(wireless_info "${IFACE[$i]}")"
+            IFACE_IP[$i]="${IFACE_IP[$i]} $(wireless_info "${IFACE[$i]}")"
         elif [ "${IFACE[$i]}" == "eth0" ];then
             IFACE_ICON[$i]="${ETH_ICON}"
-        else [ "${IFACE[$i]}" == "tun0" ];then
+        elif [ "${IFACE[$i]}" == "tun0" ];then
             IFACE_ICON[$i]="${TUN_ICON}"
         fi
     done
@@ -129,8 +129,9 @@ do_genmon(){
     fi
     # and now to build the string...
     for ((i = 0; i < ${#IFACE[@]}; i++));do
-        Outstring="${IFACE_ICON[$i]}${IFACE_IP[$i]} "
+        Outstring="${Outstring} ${IFACE_ICON[$i]}${IFACE_IP[$i]}"
     done
+    Outstring="${Outstring}:${WAN_ICON} ${WAN_IP}"
     echo "<icon>$ICON</icon><iconclick>nm-connection-editor</iconclick>"
     echo "<txt>${Outstring}</txt><txtclick>xfce4-taskmanager</txtclick>"
     exit 0
