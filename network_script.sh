@@ -115,12 +115,9 @@ do_genmon(){
             IFACE_IP[$i]="${IFACE_IP[$i]}$(wireless_info "${IFACE[$i]}")"
         elif [ "${IFACE[$i]}" == "eth0" ];then
             IFACE_ICON[$i]="${ETH_ICON}"
-            IFACE_INFO[$i]=""
         else [ "${IFACE[$i]}" == "tun0" ];then
             IFACE_ICON[$i]="${TUN_ICON}"
-            IFACE_INFO[$i]=""
         fi
-        IFACE_IP[$i]=$(get_lan_ip "${IFACE[$i]}")
     done
     # Now for the WAN IP
     get_wan_ip_dig
@@ -132,14 +129,11 @@ do_genmon(){
     fi
     # and now to build the string...
     for ((i = 0; i < ${#IFACE[@]}; i++));do
-        ${IFACE_ICON[$i]}${IFACE_IP}
-    
-    echo "<txt>$(get_cpu)% $(get_memory)% $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
-
- 
- 
-echo "<icon>$ICON</icon><iconclick>nm-connection-editor</iconclick>"
-echo "<txt> $CPU | $MEMUSAGE | $HD </txt><txtclick>xfce4-taskmanager</txtclick>"
-
+        Outstring="${IFACE_ICON[$i]}${IFACE_IP[$i]} "
+    done
+    echo "<icon>$ICON</icon><iconclick>nm-connection-editor</iconclick>"
+    echo "<txt>${Outstring}</txt><txtclick>xfce4-taskmanager</txtclick>"
     exit 0
 }
+
+do_genmon
