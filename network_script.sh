@@ -2,7 +2,9 @@
 
 ##############################################################################
 # network_script by Steven Saus <steven@stevesaus.com> 30 April 2023
-# Under the GPL license.
+# Simple network monitor script for use with xfce4-genmon panel applet 
+# (https://docs.xfce.org/panel-plugins/xfce4-genmon-plugin)
+# Released under the GPL license.
 # Cribs significantly from several byobu scripts originally by 
 # Dustin Kirkland <kirkland@canonical.com> for Canonical in 2008.
 ##############################################################################

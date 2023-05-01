@@ -1,8 +1,10 @@
 #!/bin/bash
 
 ##############################################################################
-# network_script by Steven Saus <steven@stevesaus.com> 30 April 2023
-# Under the GPL license.
+# sysmon_script by Steven Saus <steven@stevesaus.com> 30 April 2023
+# System monitor script for use with xfce4-genmon panel applet 
+# (https://docs.xfce.org/panel-plugins/xfce4-genmon-plugin)
+# Released under the GPL license.
 # Cribs significantly from other genmon scripts (including the default example)
 # as well as these: 
 # https://github.com/almaceleste/xfce4-genmon-scripts
@@ -78,8 +80,8 @@ get_temp (){
     # Core 0
     #TEMP=$(sensors | awk '/[Cc]ore 0/{print $3}')
     # PACKAGE 0
-    TEMP=$(sensors | awk '/Package id 0/{print $4}'| tr -d "+" | awk -F "." "{print $1}")
-    TEMPWARN=$(printf "%.0f" $TEMP)
+    TEMP=$(sensors | awk '/Package id 0/{print $4}'| tr -d "+")
+    TEMPWARN=$(echo ${TEMP} |  sed 's!\.! !' | awk '{print $1}')
     color=$(warn_colors $TEMPWARN $TEMP_WARN $TEMP_ALARM)
     printf "%s<span fgcolor='%s'>%s</span>" "${temp_icon}" "${color}" "${TEMP}"    
 }
@@ -108,7 +110,7 @@ do_genmon (){
     # do the genmon
     echo "<icon>$ICON</icon><iconclick>xfce4-taskmanager</iconclick>"
     # build the text string
-    echo "<txt>$(get_cpu)% $(get_memory)% $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
+    echo "<txt>$(get_cpu)% $(get_memory)% $(get_temp) $(get_battery) $(get_load) </txt><txtclick>xfce4-taskmanager</txtclick>"
 
     exit 0    
 }
