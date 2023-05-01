@@ -89,7 +89,8 @@ get_temp (){
 }
 
 get_load (){
-    LOAD=$(uptime | tr -s " " | cut -d' ' -f9- | tr -d ",")
+    # if < 1 hr uptime, it mistakenly puts AVG on the line
+    LOAD=$(uptime | tr -s " " | awk -F "average: " '{print $2}' | tr -d ",")
     LOAD1=$(printf "%0.f" $(echo $LOAD | awk '{print $1}'))
     # only really want 1m load for coloration
     color=$(warn_colors $LOAD1 $LOAD_WARN $LOAD_ALARM)

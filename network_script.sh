@@ -134,6 +134,7 @@ do_genmon(){
     fi
     if [ "$WAN_IP" == "" ];then
         WAN_IP="Offline"
+        # TODO - Add test for IP4 format
     fi
     # and now to build the string...
     for ((i = 0; i < ${#IFACE[@]}; i++));do
