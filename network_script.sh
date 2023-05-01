@@ -34,7 +34,7 @@ wireless_info() {
     # returns link quality here only, but iwconfig does return a lot more
     # info if you're so interested.
     QUALITY=$(/sbin/iwconfig 2>/dev/null | grep "Link Quality" | sed -e "s/^.*Link Quality.//" -e "s/ .*$//g" | awk -F/ '{printf "%.0f", 100*$1/$2}')
-    echo "<span color='$(warn_colors ${QUALITY})'>${QUALITY}</span>"
+    echo "(<span color='$(warn_colors ${QUALITY})'>${QUALITY}</span>)"
 }
 
 get_lan_ip (){
