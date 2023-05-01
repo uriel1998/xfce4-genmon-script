@@ -77,19 +77,19 @@ get_memory (){
 }
 
 get_temp (){
+    # I'm using the package value here because it seems to be more reflective
+    # of what bpytop reports
     # Core 0
     #TEMP=$(sensors | awk '/[Cc]ore 0/{print $3}')
     # PACKAGE 0
     TEMP=$(sensors | awk '/Package id 0/{print $4}'| tr -d "+")
     TEMPWARN=$(echo ${TEMP} |  sed 's!\.! !' | awk '{print $1}')
     color=$(warn_colors $TEMPWARN $TEMP_WARN $TEMP_ALARM)
-    printf "%s<span fgcolor='%s'>%s</span>" "${temp_icon}" "${color}" "${TEMP}"    
+    printf "%s <span fgcolor='%s'>%s</span>" "${temp_icon}" "${color}" "${TEMP}"    
 }
 
 get_load (){
     LOAD=$(uptime | tr -s " " | cut -d' ' -f9- | tr -d ",")
-    # iowait
-    IOWAIT=$(/usr/bin/iostat -c -k -z | head -4 | tail -1 | awk '{print $4}')
     LOAD1=$(printf "%0.f" $(echo $LOAD | awk '{print $1}'))
     # only really want 1m load for coloration
     color=$(warn_colors $LOAD1 $LOAD_WARN $LOAD_ALARM)
@@ -101,7 +101,6 @@ get_battery (){
     BATTERY_VALUE=$(acpi -b |awk -F ": " '{print $2}'| awk -F " " '{print $2}' | tr -d "%" )
     BATTWARN=$(echo "scale=2;(100-$BATTERY_VALUE)" | bc)
     BATTWARN=$(printf "%.0f" $BATTWARN)
-
     color=$(warn_colors $BATTWARN $BATTERY_WARN $BATTERY_ALARM)
     printf "%s <span fgcolor='%s'>%s</span>" "${power_icon}" "${color}" "${BATTERY}"        
 }

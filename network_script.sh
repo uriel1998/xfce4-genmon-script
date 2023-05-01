@@ -45,8 +45,7 @@ get_lan_ip (){
 }
 
 get_wan_ip_dig (){
-    # this is the much more intensive attempt to find the WAN address via 
-    # various resolvers controlled by others. Obviously leaks data to the web.
+    #  Obviously leaks data to the web. This is called AFTER the 3rd party ones.
     result=$(dig +short myip.opendns.com @resolver1.opendns.com)
     if [ -z "$result" ];then
         result=$(dig +short myip.opendns.com @resolver2.opendns.com)
@@ -65,6 +64,7 @@ get_wan_ip_dig (){
 
 
 get_wan_ip_3rdparty () {
+    #  Obviously leaks data to the web.
     result=$(curl --silent ipecho.net/plain)
     if [ -n $result ]; then
         WAN_IP="$result"
@@ -121,10 +121,16 @@ do_genmon(){
             IFACE_ICON[$i]="${TUN_ICON}"
         fi
     done
+
     # Now for the WAN IP
-    get_wan_ip_dig
-    if [ "$WAN_IP" == "" ];then
-        get_wan_ip_3rdparty
+    get_wan_ip_3rdparty
+    # DO NOT USE DIG IF TUNNELED
+    TUN_CHECK=""
+    TUN_CHECK=$(case "${IFACE[@]}" in  *"tun"*) echo "1" ;; esac)
+    if [[ -z $TUN_CHECK ]];then
+        if [ "$WAN_IP" == "" ];then
+            get_wan_ip_dig
+        fi
     fi
     if [ "$WAN_IP" == "" ];then
         WAN_IP="Offline"
