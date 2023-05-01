@@ -13,15 +13,14 @@ ETH_ICON=☎
 WLAN_ICON=📡
 WAN_ICON=🛰
 
-
-
-
 ICON="networkmanager"
 IFACE=""
-LAN_IP=""
+IFACE_INFO=""  # used for storing wireless link quality
+IFACE_ICON=""
+IFACE_IP=""
 WAN_IP=""
 
-get_iface (){
+get_iface(){
     # Are we wifi/eth0/tunneled?
     # this is in an array because network-manager WILL connect via multiple 
     # interfaces -- wired and wireless -- unless explicitly told not to
@@ -93,15 +92,25 @@ get_wan_ip_3rdparty () {
 }
 
 
-main (){
+do_genmon(){
     get_iface
     # for multiple connections 
     for ((i = 0; i < ${#IFACE[@]}; i++));do
-        if [ "${LAN_IP[$i]}" == "wlan0" ];then
-            wireless_info "${LAN_IP[$i]}" 
-        fi  
-        LAN_IP[$i]=$(get_lan_ip "${IFACE[$i]}")
+        if [ "${IFACE[$i]}" == "wlan0" ];then
+            IFACE_ICON[$i]="${WLAN_ICON}"
+            IFACE_INFO[$i]=$(wireless_info "${IFACE[$i]}") 
+            # this is where we'd add coloring for quality, will do later.
+            # TODO            
+        elif [ "${IFACE[$i]}" == "eth0" ];then
+            IFACE_ICON[$i]="${ETH_ICON}"
+            IFACE_INFO[$i]=""
+        else [ "${IFACE[$i]}" == "tun0" ];then
+            IFACE_ICON[$i]="${TUN_ICON}"
+            IFACE_INFO[$i]=""
+        fi
+        IFACE_IP[$i]=$(get_lan_ip "${IFACE[$i]}")
     done
+    # Now for the WAN IP
     get_wan_ip_dig
     if [ "$WAN_IP" == "" ];then
         get_wan_ip_3rdparty
@@ -109,23 +118,10 @@ main (){
     if [ "$WAN_IP" == "" ];then
         WAN_IP="Offline"
     fi
-    
+    # and now to build the string...
 
-# format output here with emojis, color, xfce4 stuff (or plain for conky?)
-    if [ "$QUIET" = 4 ];then
-        if [ "$WAN_IP" != "" ];then
-            echo "$IFACE - $LAN_IP : $WAN_IP"
-            exit 0
-        else
-            echo "Offline ..."
-            exit 99
-        fi
-    fi
-    exit 0
-}
+    echo "<txt>$(get_cpu)% $(get_memory)% $(get_load) $(get_temp)</txt><txtclick>xfce4-taskmanager</txtclick>"
 
-
-do_genmon (){
  
  
 echo "<icon>$ICON</icon><iconclick>nm-connection-editor</iconclick>"
