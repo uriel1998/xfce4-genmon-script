@@ -1,8 +1,11 @@
 #!/bin/bash
 
 ##############################################################################
-# wan_detect, by Steven Saus 28 April 2023
-# Cribs from https://github.com/almaceleste/xfce4-genmon-scripts
+# network_script by Steven Saus <steven@stevesaus.com> 30 April 2023
+# Under the GPL license.
+# Cribs significantly from other genmon scripts (including the default example)
+# as well as these: 
+# https://github.com/almaceleste/xfce4-genmon-scripts
 # https://github.com/xtonousou/xfce4-genmon-scripts
 
 # setting some defaults. Change as appropriate.
@@ -27,8 +30,7 @@ mem_icon=🧠
 temp_icon=🌡
 power_icon=🔋
 load_icon=📜
-#barometers=⚗
-#🐧💾📩💥⚠⚙☮✇📀💿  
+
 
 # Resetting variables
 CPU=""
@@ -53,8 +55,8 @@ warn_colors (){
 
 
 get_cpu (){
-    #https://www.baeldung.com/linux/get-cpu-usage
-    CPU_RAW=$(cat /proc/stat |grep cpu |tail -1|awk '{print ($5*100)/($2+$3+$4+$5+$6+$7+$8+$9+$10)}'|awk '{print 100-$1}')
+    #https://stackoverflow.com/a/52751050
+    CPU_RAW=$(top -b -n 3 -d 1  | head -3 | tail -1 | awk '{print $2}')
     CPU=$(printf "%.0f" $CPU_RAW)
     color=$(warn_colors $CPU $CPU_WARN $CPU_ALARM)
     printf "%s<span fgcolor='%s'>%s</span>" "${cpu_icon}" "${color}" "${CPU}"
