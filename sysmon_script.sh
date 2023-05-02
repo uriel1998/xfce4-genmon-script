@@ -70,10 +70,10 @@ get_memory (){
     # get % memory used
     MEMTOT=$(cat /proc/meminfo | grep MemTotal | awk '{printf ("% 0.1f", $2/1024000)}')
     MEMAVA=$(cat /proc/meminfo | grep MemAvailable | awk '{printf ("%0.1f", $2/1024000)}')
-    MEM=$(echo "scale=2;($MEMTOT - $MEMAVA)" | bc)
+    MEM=$(echo "scale=2;100-($MEMAVA / $MEMTOT * 100)" | bc)
     MEMWARN=$(printf "%.0f" $MEM)
     color=$(warn_colors $MEMWARN $MEM_WARN $MEM_ALARM)
-    printf "%s<span fgcolor='%s'>%s</span>" "${mem_icon}" "${color}" "${MEM}"
+    printf "%s<span fgcolor='%s'>%s</span>" "${mem_icon}" "${color}" "${MEMWARN}"
 }
 
 get_temp (){
