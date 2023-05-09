@@ -58,7 +58,8 @@ warn_colors (){
 
 get_cpu (){
     #https://stackoverflow.com/a/52751050
-    CPU_RAW=$(top -b -n 3 -d 1  | head -3 | tail -1 | awk '{print $2}')
+    #CPU_RAW=$(top -b -n 3 -d 1  | head -3 | tail -1 | awk '{print $2}')
+    CPU_RAW=$(printf "%b" "import psutil\nprint('{}%'.format(psutil.cpu_percent(interval=2)))" | python3)
     CPU=$(printf "%.0f" $CPU_RAW)
     color=$(warn_colors $CPU $CPU_WARN $CPU_ALARM)
     printf "%s<span fgcolor='%s'>%s</span>" "${cpu_icon}" "${color}" "${CPU}"
